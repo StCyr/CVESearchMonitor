@@ -1,0 +1,6 @@
+*
+!.gitignore
+!CVESearchMonitor.cfg
+!assets.cfg
+!README.md
+!CVESearchMonitor.py
