@@ -17,10 +17,13 @@ from email.message import EmailMessage
 from datetime import date, timedelta
 from pprint import pprint, pformat
 
+# Get directory of the running script
+scriptDirectory = os.path.dirname(os.path.realpath(__file__))
 # Process any provided argument
 parser = argparse.ArgumentParser()
-parser.add_argument("-c", "--config", help="Specify the configuration file to use (Default: './CVESearchMonitor.cfg')", default='./CVESearchMonitor.cfg')
-parser.add_argument("-a", "--assets", help="Specify the assets file to use (Default: './assets.cfg')", default='./assets.cfg')
+parser.add_argument("-a", "--assets", help="Specify the assets file to use (Default: './assets.cfg')", default = scriptDirectory + '/assets.cfg')
+parser.add_argument("-c", "--config", help="Specify the configuration file to use (Default: './CVESearchMonitor.cfg')", default = scriptDirectory + '/CVESearchMonitor.cfg')
+parser.add_argument("-l", "--local", help="Do not send report by email, but rather print in on stdout", action='store_true')
 parser.add_argument("-s", "--startDate", help="Specify the date (format 'YYYY-MM-DD') from which CVE must be retrieved. When this argument is passed, the last run \
                                           date from 'lastRunFile' is not used and not updated. When no last run date is found, and this argument isn't provided, \
                                           CVESearchMonitor will retrieved all CVE's modified during the last 30 days")
@@ -105,17 +108,22 @@ body += str(len(newVulnerabilities)) + ' vulnerabilities found possibly applying
 body += '\n'
 body += pformat(newVulnerabilities)
 
-# Create report email
-msg = EmailMessage()
-msg.set_content(body)
-msg['Subject'] = 'CVESearchMon report'
-msg['From']    = sender
-msg['To']      = recipient
+# Reporting
+if args.local:
+  # Print on stdout if requested
+  print(body)
+else:
+  # Default reporting is by email
+  msg = EmailMessage()
+  msg.set_content(body)
+  msg['Subject'] = 'CVESearchMon report'
+  msg['From']    = sender
+  msg['To']      = recipient
 
-# Send email
-s = smtplib.SMTP(smtpServer)
-s.send_message(msg)
-s.quit()
+  # Send email
+  s = smtplib.SMTP(smtpServer)
+  s.send_message(msg)
+  s.quit()
 
 # Save date of last run if needed
 if not args.startDate:
