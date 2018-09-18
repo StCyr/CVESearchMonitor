@@ -11,22 +11,16 @@ usage: CVESearchMonitor.py [-h] [-a ASSETS] [-c CONFIG] [-l] [-s STARTDATE]
 
 optional arguments:
 
-  -h, --help            show this help message and exit
-
-  -a ASSETS, --assets ASSETS
-
+  -h, --help            show this help message and exit  
+  -a ASSETS, --assets ASSETS  
                         Specify the assets file to use (Default:
-                        './assets.cfg')
-
-  -c CONFIG, --config CONFIG
-
+                        './assets.cfg')  
+  -c CONFIG, --config CONFIG  
                         Specify the configuration file to use (Default:
-                        './CVESearchMonitor.cfg')
-
+                        './CVESearchMonitor.cfg')  
   -l, --local           Do not send report by email, but rather print in on
-                        stdout
-  -s STARTDATE, --startDate STARTDATE
-
+                        stdout  
+  -s STARTDATE, --startDate STARTDATE  
                         Specify the date (format 'YYYY-MM-DD') from which CVE
                         must be retrieved. When this argument is passed, the
                         last run date from 'lastRunFile' (see configuration
@@ -39,26 +33,18 @@ optional arguments:
 
 ./CVESearchMonitor.py -a my_assets.cfg -l -s 2018-09-17
 
-126 new CVE found from last run (2018-09-17).
-
+126 new CVE found from last run (2018-09-17).  
 2 vulnerabilities found possibly applying to monitored assets.
 
-[{'asset': 'Flash player',
-
-  'cvss': 5.0,
-
-  'id': 'CVE-2018-5008',
-
+[{'asset': 'Flash player',  
+  'cvss': 5.0,  
+  'id': 'CVE-2018-5008',  
   'summary': 'Adobe Flash Player 30.0.0.113 and earlier versions have an '
              'Out-of-bounds read vulnerability. Successful exploitation could '
-             'lead to information disclosure.'},
-
- {'asset': 'Flash player',
-
-  'cvss': 6.8,
-
-  'id': 'CVE-2018-5007',
-
+             'lead to information disclosure.'},  
+ {'asset': 'Flash player',  
+  'cvss': 6.8,  
+  'id': 'CVE-2018-5007',  
   'summary': 'Adobe Flash Player 30.0.0.113 and earlier versions have a Type '
              'Confusion vulnerability. Successful exploitation could lead to '
              'arbitrary code execution in the context of the current user.'}]
