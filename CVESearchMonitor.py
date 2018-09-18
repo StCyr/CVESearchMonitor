@@ -25,7 +25,7 @@ parser.add_argument("-a", "--assets", help="Specify the assets file to use (Defa
 parser.add_argument("-c", "--config", help="Specify the configuration file to use (Default: './CVESearchMonitor.cfg')", default = scriptDirectory + '/CVESearchMonitor.cfg')
 parser.add_argument("-l", "--local", help="Do not send report by email, but rather print in on stdout", action='store_true')
 parser.add_argument("-s", "--startDate", help="Specify the date (format 'YYYY-MM-DD') from which CVE must be retrieved. When this argument is passed, the last run \
-                                          date from 'lastRunFile' is not used and not updated. When no last run date is found, and this argument isn't provided, \
+                                          date from 'lastRunFile' (see configuration file) is not used and not updated. When no last run date is found, and this argument isn't provided, \
                                           CVESearchMonitor will retrieved all CVE's modified during the last 30 days")
 args = parser.parse_args()
 
