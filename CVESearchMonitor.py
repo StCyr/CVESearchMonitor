@@ -75,7 +75,7 @@ while len(rjson)==50:
 
   # Send request to CVE-Search instance, decode result, and append it to the list of CVE's already retrieved
   try: 
-    r = requests.get( url, headers=headers )
+    r = requests.get( url + '/query', headers=headers )
     r.raise_for_status()
     rjson = r.json()
     cveList += rjson
@@ -89,7 +89,7 @@ newVulnerabilities = []
 for item in cveList:
 
   # For all assets to be monitored, check if there's a match with any of 
-  # the CVE's 'vulnerabl_²configuration', 'vulnerable_configuration_cpe_2_2' or 'summary' fields
+  # the CVE's 'vulnerable_configuration', 'vulnerable_configuration_cpe_2_2' or 'summary' fields
   for asset in assets:
     cveData =  str(item['vulnerable_configuration'] + item['vulnerable_configuration_cpe_2_2']) + item['summary']
     if asset['query'] in cveData.lower():
@@ -98,8 +98,7 @@ for item in cveList:
       cve['id'] = item['id']
       cve['summary'] = item['summary']
       cve['cvss'] = item['cvss']
-      cve['vulnerable_configuration'] = item['vulnerable_configuration']
-      cve['vulnerable_configuration_cpe_2_2'] = item['vulnerable_configuration_cpe_2_2']
+      cve['url'] = url + '/cve/' + item['id']
       newVulnerabilities.append(cve)
 
 # Compose body of report email
