@@ -54,3 +54,4 @@ optional arguments:
 * A working CVE-Search instance
 * A working SMTP server
 * Python 3
+* Python's packaging module (package python3-packaging on Ubuntu)

@@ -15,6 +15,7 @@ import requests
 import smtplib
 from email.message import EmailMessage
 from datetime import date, timedelta
+from packaging import version
 from pprint import pprint, pformat
 
 # Get directory of the running script
@@ -48,10 +49,11 @@ for s in config.sections():
   asset = {}
   asset['name'] = s
   asset['description'] = config[s].get('description', 'Not defined')
-  asset['query'] = config[s].get('query')
+  asset['query'] = config[s].get('query').lower()
   if not asset['query']:
     print('Ignoring asset ' + s + ' as it has no query field.')
     continue
+  asset['version'] = config[s].get('version')
   assets.append(asset)
 
 # Get date of last run and default to all CVE from current year when last run date wasn't found.
@@ -88,18 +90,37 @@ while len(rjson)==50:
 newVulnerabilities = []
 for item in cveList:
 
-  # For all assets to be monitored, check if there's a match with any of 
-  # the CVE's 'vulnerable_configuration', 'vulnerable_configuration_cpe_2_2' or 'summary' fields
+  # For all assets to be monitored, check if there's a match with the currently selected CVE
   for asset in assets:
+
+    # First check if the cveData match the asset's query field
     cveData =  str(item['vulnerable_configuration'] + item['vulnerable_configuration_cpe_2_2']) + item['summary']
     if asset['query'] in cveData.lower():
-      cve = {}
-      cve['asset'] = asset['name']
-      cve['id'] = item['id']
-      cve['summary'] = item['summary']
-      cve['cvss'] = item['cvss']
-      cve['url'] = url + '/cve/' + item['id']
-      newVulnerabilities.append(cve)
+
+      # The CVE match for the moment, but it might change if the asset has a version field
+      cveMatch = True
+      if asset['version']:
+
+        # The asset has a version field, so it must also match
+        cveMatch = False
+        assetVersion = version.parse(asset['version'])
+
+        # Parse CPE-2.3
+        for cpe in item['vulnerable_configuration'] + item['vulnerable_configuration_cpe_2_2']: 
+          cpeVersion = version.parse(cpe.split(":")[-2])
+          if assetVersion<=cpeVersion:
+            cveMatch = True
+            break
+
+      # The CVE matched, add it to the list of new vulnerabilities identified
+      if cveMatch == True:
+          cve = {}
+          cve['asset'] = asset['name']
+          cve['id'] = item['id']
+          cve['summary'] = item['summary']
+          cve['cvss'] = item['cvss']
+          cve['url'] = url + '/cve/' + item['id']
+          newVulnerabilities.append(cve)
 
 # Compose body of report email
 body = str(len(cveList)) + ' new CVE found from last run (' + startDate + ').\n'
