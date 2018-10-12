@@ -62,7 +62,7 @@ try:
     startDate = args.startDate
   else: 
     f = open( lastRunFile )
-    startDate = f.read()
+    startDate = f.read().rstrip()
 except:
   startDate = str(date.today() - timedelta(30))
 
