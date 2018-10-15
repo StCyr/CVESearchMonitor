@@ -105,12 +105,27 @@ for item in cveList:
         cveMatch = False
         assetVersion = version.parse(asset['version'])
 
-        # Parse CPE-2.3
+        # Parse CPE
         for cpe in item['vulnerable_configuration'] + item['vulnerable_configuration_cpe_2_2']: 
-          cpeVersion = version.parse(cpe.split(":")[-2])
-          if assetVersion<=cpeVersion:
-            cveMatch = True
-            break
+          cpeArray = cpe.split(":")
+          try:
+            # Get version from CPE
+            if cpe.startswith("cpe:2.3"):
+              cpeVersion = version.parse(cpe.split(":")[5])
+            else:
+              cpeVersion = version.parse(cpe.split(":")[4])
+            # Only compare versions for matching products
+            if asset['query'] in cpe:
+              # Compare versions
+              if assetVersion <= cpeVersion:
+                cveMatch = True
+                break
+          except IndexError:
+            # If we get the IndexError exception, that means, no version was defined in the CPE,
+            # and we assume it matches our version if the query match in the cpe
+            if asset['query'] in cpe:
+              cveMatch = True
+              break
 
       # The CVE matched, add it to the list of new vulnerabilities identified
       if cveMatch == True:
