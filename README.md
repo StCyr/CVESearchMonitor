@@ -28,6 +28,11 @@ optional arguments:
                         date is found, and this argument isn't provided,
                         CVESearchMonitor will retrieved all CVE's modified
                         during the last 30 days
+  -1, --oneEmailPerCVE  Send one email for each new or updated CVE found.
+                        This may be usefull if you're sending your report
+                        to a ticketing system because the email 'subject
+                        will be unique per CVE.
+                        Doesn't apply when the --local argument is used.
 
 # Example
 
